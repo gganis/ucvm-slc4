@@ -1,0 +1,42 @@
+TIME 5
+DEBU 0
+*NEVT 200 
+*CLAS 16 
+EFLW
+UPRL
+* MEFL
+* RENF
+* CSST  0.0 0.0 0.0 0.999 0.999 0.999
+* KBEM
+NCUN
+PCOR 0
+*
+* CARDS generated on Monday 3-DECEMBER-2001 at 12:13
+*
+* typedat=>Real DATA
+* institute=>CERN
+* wantwhat=>List of Real Data cartridges and creation of FILI cards
+* data_type=>MINI
+* DataYear=>1999
+* runorfill=>
+* selby=>YEAR
+* RunOrCart=>
+* McYear=>1999
+* kinMass=>
+* PhysGroups=>F_______________________%
+* energy_Lep=>  200000
+* filisorted=>No
+* specpar=>
+* Runquality=>WW Physics
+* OutputType=>Normal output
+* processings=>   Last         60      20010318 to 20010322   313    205     Yes
+* EdirYesno=>Yes
+
+*MC 
+FILI 'zm4000_43.edir | EDIR'
+*DATA
+*FILI '/afs/cern.ch/user/m/maggim/MIT/edirs/y15223_28.edir  | EDIR' 
+* !!! Please DO NOT REMOVE the following card !!!
+NSEQ
+HIST 'test200.his'
+ENDQ 

@@ -1,0 +1,33 @@
+#!/bin/csh
+#BSUB -q 8nh
+#BSUB -r
+#BSUB -J MIT
+#
+#
+echo ALPHA job prepared by /cvmfs/aleph.cern.ch/shared/script/alpharun on Jun 4 07:07:44
+#
+echo ALPHA job run on `date` in the directory `pwd`
+set echo on
+cd $WORKDIR
+#
+cp /tmp/MIT/MIT.F MIT.F
+cp /tmp/MIT/MIT.cards MIT.cards
+# === execute
+/cvmfs/aleph.cern.ch/shared/script/alpharun  -v 126  -C MIT.cards  -f MIT.F    -r MIT
+cp test200.his /tmp/MIT/test200.his
+# === clean up at jobend
+EndJob:
+if ( -r core) then
+   if (Linux == "HP-UX") then
+      set DBX_OS = "xdb" 
+   else
+      set DBX_OS = "dbx" 
+   endif
+$DBX_OS MIT <<EOF
+where
+quit
+EOF
+endif
+echo " Files in the LSF directory  "
+ls -l
+exit

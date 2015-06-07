@@ -1,0 +1,140 @@
+[ganis@localhost ~]$ sudo service docker start
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for ganis: 
+Starting Docker:                                           [  OK  ]
+
+[ganis@localhost ~]$ sudo su -
+[root@localhost ~]# cd /etc/cvmfs/
+// Edit cernvm-slc4.cern.ch.conf to look like this
+[root@localhost cvmfs]# cat config.d/cernvm-slc4.cern.ch.conf
+CVMFS_SERVER_URL=http://hepvm.cern.ch/cvmfs/cernvm-slc4.cern.ch
+CVMFS_KEYS_DIR=/etc/cvmfs/keys
+
+[root@localhost cvmfs]# cd keys
+[root@localhost keys]# wget https://raw.githubusercontent.com/cernvm/cernvm-micro/master/packages.d/cvmfs-config/etc/cvmfs/keys/cernvm-slc4.cern.ch/cernvm-slc4.cern.ch.pub
+--2015-06-02 16:26:21--  https://raw.githubusercontent.com/cernvm/cernvm-micro/master/packages.d/cvmfs-config/etc/cvmfs/keys/cernvm-slc4.cern.ch/cernvm-slc4.cern.ch.pub
+Resolving raw.githubusercontent.com... 185.31.17.133
+Connecting to raw.githubusercontent.com|185.31.17.133|:443... connected.
+HTTP request sent, awaiting response... No data received.
+Retrying.
+
+--2015-06-02 16:26:23--  (try: 2)  https://raw.githubusercontent.com/cernvm/cernvm-micro/master/packages.d/cvmfs-config/etc/cvmfs/keys/cernvm-slc4.cern.ch/cernvm-slc4.cern.ch.pub
+Connecting to raw.githubusercontent.com|185.31.17.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 451 [text/plain]
+Saving to: `cernvm-slc4.cern.ch.pub'
+
+100%[===============================================================>] 451         --.-K/s   in 0s      
+
+2015-06-02 16:26:23 (70.2 MB/s) - `cernvm-slc4.cern.ch.pub' saved [451/451]
+
+[root@localhost keys]# cat cernvm-slc4.cern.ch.pub 
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxSTnsdRWVQyvbltrL3+b
+trvAFD6T+K6th9Ira6UhYvhTDQQioSQHQeG9kajotBzk/TMiXCgzSj9VkUcxsdNs
+p2kO7v7nrRCceLOpwA7cHGNFjoaI6Rt1J+l6zbcrqmF2oPDDUM/Dq4VBJBQZ9BAY
+7DqzlLkFi7aG7Ju/x5sRU9i6XLzbKuvnIGuRtZvbyMQdjsP1sowlpPsoNRyUKR4F
+NVihi9D+WNUkKoIEaviNW2ZP/8/eXlg9dbjupBJRWRcHfByXf+/qkygcTuDTA/lO
+2qKcw7zILqF/d5yxVHyp9xoQNu5xTvmsuy8UVNyfrQ3muESkDrA+SpY8dA+Smxft
+dwIDAQAB
+-----END PUBLIC KEY-----
+[
+[root@localhost keys]# ls
+cern.ch  cernvm-slc4.cern.ch.pub  desy.de  egi.eu  opensciencegrid.org
+[root@localhost keys]# ls /cvmfs/aleph.cern.ch/
+(may take a little while)
+
+Linux  etc  i386_redhat42  reference  shared
+[root@localhost keys]# ls /cvmfs/cernvm-slc4.cern.ch
+cvm3  new_repository  update-packs
+[root@localhost keys]# exit
+logout
+[ganis@localhost ~]$
+
+
+[ganis@localhost ~]$ mount
+aufs on / type aufs (rw,dirs=/mnt/.rw=rw:/mnt/.ro=ro)
+proc on /proc type proc (rw)
+sysfs on /sys type sysfs (rw)
+devpts on /dev/pts type devpts (rw,gid=5,mode=620)
+/mnt/.rw/cvmfs on /cvmfs type none (rw,bind)
+none on /proc/sys/fs/binfmt_misc type binfmt_misc (rw)
+tmpfs on /dev/shm type tmpfs (rw)
+cvmfs2 on /cvmfs/cvmfs-config.cern.ch type fuse (ro,nosuid,nodev,allow_other,default_permissions)
+cvmfs2 on /cvmfs/aleph.cern.ch type fuse (ro,nosuid,nodev,allow_other,default_permissions)
+cgroup on /sys/fs/cgroup type tmpfs (rw,uid=0,gid=0,mode=0755)
+cvmfs2 on /cvmfs/cernvm-slc4.cern.ch type fuse (ro,nosuid,nodev,allow_other,default_permissions)
+
+
+
+[ganis@localhost ~]$ scp jblomer@lxplus:ucvm-docker.tar .
+The authenticity of host 'lxplus (188.184.68.153)' can't be established.
+RSA key fingerprint is a4:9f:57:6b:d5:4e:4d:56:85:ba:99:db:8c:2a:8e:b7.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'lxplus,188.184.68.153' (RSA) to the list of known hosts.
+Password: 
+ucvm-docker.tar                                                        100%   16MB  16.1MB/s   00:01    
+
+[ganis@localhost ~]$ cat ucvm-docker.tar | docker import - ucvm-docker
+f1e0389d973745a53969451e21f0b0ce6abab93053493016c7aca3e3f10ea596
+[ganis@localhost ~]$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+ucvm-docker         latest              f1e0389d9737        2 seconds ago       16.91 MB
+
+[ganis@localhost ~]$ docker run -i -t -v /cvmfs/cernvm-slc4.cern.ch/cvm3:/cernvm -v /cvmfs/aleph.cern.ch:/cvmfs/aleph.cern.ch ucvm-docker /init
+***********************************
+*** Welcome to CernVM in Docker ***
+***********************************
+
+Scientific Linux SL release 4.9 (Beryllium)
+
+bash-3.00# ls
+UCVM  cernvm  dev  home  lib	opt   root  srv  tmp  var
+bin   cvmfs   etc  init  lib64	proc  sbin  sys  usr
+bash-3.00# . /cvmfs/aleph.cern.ch/etc/login.sh 
+bash-3.00# gcc -v
+
+
+Reading specs from /cernvm/usr/bin/../lib/gcc/i386-redhat-linux/3.4.6/specs
+Configured with: ../configure --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --enable-shared --enable-threads=posix --disable-checking --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-java-awt=gtk --host=i386-redhat-linux
+Thread model: posix
+gcc version 3.4.6 20060404 (Red Hat 3.4.6-11)
+
+
+
+bash-3.00# pwd
+/
+bash-3.00# ls
+UCVM  cernvm  dev  home  lib	opt   root  srv  tmp  var
+bin   cvmfs   etc  init  lib64	proc  sbin  sys  usr
+
+
+bash-3.00# useradd -m -c "ganis" -s /bin/bash ganis
+bash-3.00# ls /home/
+ganis
+bash-3.00# sudo -h
+usage: sudo -V | -h | -L | -l | -v | -k | -K | [-H] [-P] [-S] [-b] [-p prompt]
+            [-u username/#uid] [-r role] [-t type] -s | <command>
+bash-3.00# sudo -i ganis
+sudo: Illegal option -i
+usage: sudo -V | -h | -L | -l | -v | -k | -K | [-H] [-P] [-S] [-b] [-p prompt]
+            [-u username/#uid] [-r role] [-t type] -s | <command>
+bash-3.00# man sudo
+bash-3.00# sudo -u ganis su
+sudo: /etc/sudoers is owned by uid 497, should be 0
+2015-06-04 05:11:47 Cannot open main log file "/var/log/exim/main.log": No such file or directory: euid=0 egid=0
+2015-06-04 05:11:47 Exim configuration file /etc/exim/exim.conf has the wrong owner, group, or mode
+2015-06-04 05:11:47 Cannot open main log file "/var/log/exim/main.log": No such file or directory: euid=0 egid=0
+exim[92]: 2015-06-04 05:11:47 Exim configuration file /etc/exim/exim.conf has the wrong owner, group, or mode
+exim[92]: 2015-06-04 05:11:47 Cannot open main log file "/var/log/exim/main.log": No such file or directory: euid=0 egid=0
+exim[92]: exim: could not open panic log - aborting: see message(s) above
+exim: could not open panic log - aborting: see message(s) above
+bash-3.00# 
+
