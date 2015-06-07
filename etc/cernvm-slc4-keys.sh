@@ -20,4 +20,3 @@ cat cernvm-slc4.cern.ch.pub
 # Access the repository
 cd $cwddir
 ls /cvmfs/cernvm-slc4.cern.ch
-cvm3  new_repository  update-packs
